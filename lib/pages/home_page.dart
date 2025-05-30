@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:foode_waste_app_1/components/my_current_location.dart';
 import 'package:foode_waste_app_1/components/my_description_box.dart';
@@ -9,6 +10,7 @@ import 'package:foode_waste_app_1/models/food.dart';
 import 'package:foode_waste_app_1/models/restaurant.dart';
 import 'package:foode_waste_app_1/pages/donation_page.dart';
 import 'package:foode_waste_app_1/pages/food_page.dart';
+import 'package:foode_waste_app_1/pages/cart_page.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {

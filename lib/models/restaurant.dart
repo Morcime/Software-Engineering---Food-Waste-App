@@ -319,9 +319,8 @@ class Restaurant extends ChangeNotifier {
     ),
   ];
 
-  // delivery address
+// delivery address
   String _deliveryAddress = 'Kb. Jeruk No. 110 Jakarta Barat';
-
   /*
   G E T T E R S
   */
@@ -329,7 +328,6 @@ class Restaurant extends ChangeNotifier {
   List<Food> get menu => _menu;
   List<CartItem> get cart => _cart;
   String get deliveryAddress => _deliveryAddress;
-
   /*
   O P E R A T I O N S
   */
@@ -347,14 +345,15 @@ class Restaurant extends ChangeNotifier {
       bool isSameFood = item.food == food;
 
       // check if the list of selected addons are the same
-      bool isSameAddons = ListEquality().equals(
-        item.selectedAddons,
-        selectedAddons,
-      );
-
+      // bool isSameAddons = ListEquality().equals(
+      //   item.selectedAddons,
+      //   selectedAddons,
+      // );
+    //   return isSameFood && isSameAddons;
+    // });
+      bool isSameAddons = _addonEquality.equals(item.selectedAddons, selectedAddons);
       return isSameFood && isSameAddons;
     });
-
 
     if (cartItem != null) {
       // if item already exists, increase its quantity
@@ -368,10 +367,9 @@ class Restaurant extends ChangeNotifier {
       ));
     }
     notifyListeners();
-    notifyListeners();
+    // notifyListeners();
   }
 
-  
   // remove form cart
   void removeFromCart(CartItem cartItem) {
     int cartIndex = _cart.indexOf(cartItem);
@@ -419,8 +417,7 @@ class Restaurant extends ChangeNotifier {
     _cart.clear();
     notifyListeners();
   }
-
-  // update delivery address
+ // update delivery address
   void updateDeliveryAddress(String newAddress){
     _deliveryAddress = newAddress;
     notifyListeners();
@@ -457,7 +454,6 @@ class Restaurant extends ChangeNotifier {
     receipt.writeln("--------------");
     receipt.writeln("Total Items: ${getTotalItemCount()}");
     receipt.writeln("Total Price: ${_formatPrice(getTotalPrice())}");
-    receipt.writeln("Delivering to: $deliveryAddress");
 
     return receipt.toString();
   }
