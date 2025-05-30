@@ -29,21 +29,27 @@ class AuthService{
   }
 
   // sign up
-  Future<UserCredential> signUpWithEmailPassword(String email, password) async {
-    try{
-      // sign user up
+  Future<UserCredential> signUpWithEmailPassword(String email, String password) async {
+    try {
       UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-
-
+      // Berhasil, return UserCredential
       return userCredential;
-    }
-
-    // catch error
-    on FirebaseAuthException catch (e){
-      throw Exception(e.code);
+    } on FirebaseAuthException catch (e) {
+      // Map error code ke pesan
+      String message;
+      if (e.code == 'email-already-in-use') {
+        message = 'This email is already registered. Please log in instead.';
+      } else if (e.code == 'weak-password') {
+        message = 'The password is too weak.';
+      } else {
+        message = 'Registration failed: ${e.message}';
+      }
+      throw Exception(message); // throw dengan pesan error custom
+    } catch (e) {
+      throw Exception('An unexpected error occurred.');
     }
   }
 

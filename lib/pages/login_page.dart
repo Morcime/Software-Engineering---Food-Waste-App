@@ -20,28 +20,28 @@ class _LoginPageState extends State<LoginPage> {
 
   // login method
   void login() async {
-    // get instance of Auth service
     final _authService = AuthService();
-    
-    // try to sign in
-    try{
-      await _authService.signInWithEmailandPassword(emailController.text, passwordController.text,);
-    }
 
-    // display any error
-    catch(e){
-      showDialog(context: context, 
+    try {
+      await _authService.signInWithEmailandPassword(
+        emailController.text, passwordController.text,
+      );
+
+      // ✅ Pindahkan navigasi ke dalam try
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
         builder: (context) => AlertDialog(
-        title: Text(e.toString()),
+          title: Text(e.toString()),
         ),
       );
     }
-    // navigate to home page
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const HomePage()),
-    );
-  }
+}
+
 
   @override
   Widget build(BuildContext context) {

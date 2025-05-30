@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foode_waste_app_1/pages/cart_page.dart';
+import 'cart_page.dart';
 
 class MySliverAppBar extends StatelessWidget {
   final Widget child;
@@ -15,13 +15,14 @@ class MySliverAppBar extends StatelessWidget {
       floating: false,
       pinned: true,
       actions: [
-        //cart button
         IconButton(
           onPressed: () {
-            //go to cart page
+            // Kirim list kosong aja supaya gak error
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const CartPage()),
+              MaterialPageRoute(
+                builder: (context) => const CartPage(),
+              ),
             );
           },
           icon: const Icon(Icons.shopping_cart),
@@ -29,7 +30,7 @@ class MySliverAppBar extends StatelessWidget {
       ],
       backgroundColor: Theme.of(context).colorScheme.surface,
       foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-      title: Text("Food Waste App"),
+      title: const Text("Food Waste App"),
       flexibleSpace: FlexibleSpaceBar(
         background: Padding(
           padding: const EdgeInsets.only(bottom: 50.0),
