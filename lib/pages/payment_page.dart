@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
 import 'package:foode_waste_app_1/pages/delivery_progress_page.dart';
 import 'package:foode_waste_app_1/components/my_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:foode_waste_app_1/services/auth/database/firestore.dart';
 
 class PaymentPage extends StatefulWidget {
   const PaymentPage({super.key});
@@ -18,10 +20,15 @@ class _PaymentPageState extends State<PaymentPage> {
   String cvvCode = '';
   bool isCvvFocused = false;
 
-  //user wants to pay
-  void userTappedPay() {
+  final FireStoreService db = FireStoreService();
+
+  // Simulasi total harga dan struk (replace ini dengan data beneran)
+  int totalPrice = 50000;
+  String receipt = "Order #123456";
+
+  void userTappedPay() async {
     if (formKey.currentState!.validate()) {
-      //only show dialog if form is valid
+      // Tampilkan dialog konfirmasi
       showDialog(
         context: context,
         builder: (context) => AlertDialog(
@@ -37,16 +44,25 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
           ),
           actions: [
-            //cancel button
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text("Cancel"),
             ),
-
-            //yes button
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 Navigator.pop(context);
+
+                final user = FirebaseAuth.instance.currentUser;
+                if (user != null) {
+                  await db.checkoutOrder(
+                    userId: user.uid,
+                    totalPrice: totalPrice,
+                    receipt: receipt,
+                  );
+
+                  await db.clearCart(user.uid);
+                }
+
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -73,7 +89,6 @@ class _PaymentPageState extends State<PaymentPage> {
       ),
       body: Column(
         children: [
-          // credit card
           CreditCardWidget(
             cardNumber: cardNumber,
             expiryDate: expiryDate,
@@ -82,8 +97,6 @@ class _PaymentPageState extends State<PaymentPage> {
             showBackView: isCvvFocused,
             onCreditCardWidgetChange: (p0) {},
           ),
-
-          //credit card form
           CreditCardForm(
             cardNumber: cardNumber,
             expiryDate: expiryDate,
@@ -100,9 +113,7 @@ class _PaymentPageState extends State<PaymentPage> {
             },
             formKey: formKey,
           ),
-
           const Spacer(),
-
           MyButton(
             onTap: userTappedPay,
             text: "Pay now",

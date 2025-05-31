@@ -1,189 +1,204 @@
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 class DonationPage extends StatefulWidget {
-  const DonationPage({super.key});
+  final bool isSeller;
+  const DonationPage({super.key, required this.isSeller});
 
   @override
   State<DonationPage> createState() => _DonationPageState();
 }
 
 class _DonationPageState extends State<DonationPage> {
-  final _formKey = GlobalKey<FormState>();
-  File? _imageFile;
-  String? _selectedOrg;
-  bool _isSubmitting = false;
+  final TextEditingController productNameController = TextEditingController();
+  final TextEditingController descriptionController = TextEditingController();
+  DateTime? selectedDate;
+  File? pickedImage;
+  bool isLoading = false;
 
-  // Dummy data
-  final List<String> _organizations = [
-    'Panti Asuhan Bahagia',
-    'Rumah Singgah Sejahtera',
-    'Food Bank Indonesia'
-  ];
+  final ImagePicker _picker = ImagePicker();
 
-  final TextEditingController _foodNameController = TextEditingController();
-  final TextEditingController _descController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
-
-  Future<void> _pickImage() async {
-    try {
-      final XFile? image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image != null) {
-        if (!['jpg', 'jpeg', 'png'].contains(image.path.split('.').last.toLowerCase())) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Error: Format file tidak didukung (hanya .jpg/.png)')),
-          );
-          return;
-        }
-        setState(() => _imageFile = File(image.path));
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
-      );
+  Future<void> pickImage() async {
+    final XFile? image =
+        await _picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    if (image != null) {
+      setState(() {
+        pickedImage = File(image.path);
+      });
     }
   }
 
-  void _submitDonation() {
-    if (!_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error: Data tidak boleh kosong')),
+  Future<String?> uploadImage(File imageFile) async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return null;
+
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('donation_images')
+          .child('${user.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      final uploadTask = storageRef.putFile(imageFile);
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      debugPrint('Upload image error: $e');
+      return null;
+    }
+  }
+
+  Future<void> submitDonation() async {
+    final name = productNameController.text.trim();
+    final description = descriptionController.text.trim();
+
+    if (name.isEmpty || description.isEmpty || selectedDate == null || pickedImage == null) {
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+          title: Text('Error'),
+          content: Text('Semua field harus diisi dan foto harus dipilih!'),
+        ),
       );
       return;
     }
 
-    if (_imageFile == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error: Harap upload foto makanan')),
-      );
-      return;
-    }
-
-    setState(() => _isSubmitting = true);
-
-    // Simulasi proses submit
-    Future.delayed(const Duration(seconds: 2), () {
-      setState(() => _isSubmitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Donasi berhasil disubmit!')),
-      );
-
-      // Simulasi notifikasi setelah 5 detik
-      Future.delayed(const Duration(seconds: 5), () {
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Donasi Diambil'),
-            content: Text('Donasi "${_foodNameController.text}" telah diambil oleh ${_selectedOrg ?? "penerima"}'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      });
+    setState(() {
+      isLoading = true;
     });
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
+    final imageUrl = await uploadImage(pickedImage!);
+
+    if (imageUrl == null) {
+      setState(() {
+        isLoading = false;
+      });
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+          title: Text('Error'),
+          content: Text('Gagal mengupload foto. Silakan coba lagi.'),
+        ),
+      );
+      return;
+    }
+
+    await FirebaseFirestore.instance.collection('donations').add({
+      'userId': user.uid,
+      'productName': name,
+      'description': description,
+      'expiryDate': selectedDate,
+      'imageUrl': imageUrl,
+      'createdAt': FieldValue.serverTimestamp(),
+    });
+
+    setState(() {
+      isLoading = false;
+      productNameController.clear();
+      descriptionController.clear();
+      selectedDate = null;
+      pickedImage = null;
+    });
+
+    showDialog(
+      context: context,
+      builder: (context) => const AlertDialog(
+        title: Text('Sukses'),
+        content: Text('Donasi berhasil dikirim!'),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!widget.isSeller) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Donasi")),
+        body: const Center(
+          child: Text("Halaman ini hanya untuk Penjual."),
+        ),
+      );
+    }
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Donasi Makanan')),
+      appBar: AppBar(title: const Text("Donasi Makanan")),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              // Upload Gambar
-              GestureDetector(
-                onTap: _pickImage,
-                child: Container(
-                  height: 200,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey),
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            TextField(
+              controller: productNameController,
+              decoration: const InputDecoration(labelText: "Nama Produk"),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: descriptionController,
+              decoration: const InputDecoration(labelText: "Deskripsi"),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 10),
+            ListTile(
+              title: Text(
+                selectedDate == null
+                    ? "Pilih Tanggal Kedaluwarsa"
+                    : "Kedaluwarsa: ${selectedDate!.toLocal().toString().split(' ')[0]}",
+              ),
+              trailing: const Icon(Icons.calendar_today),
+              onTap: () async {
+                final date = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime.now().add(const Duration(days: 1)),
+                  firstDate: DateTime.now(),
+                  lastDate: DateTime.now().add(const Duration(days: 365)),
+                );
+                if (date != null) {
+                  setState(() {
+                    selectedDate = date;
+                  });
+                }
+              },
+            ),
+            const SizedBox(height: 10),
+
+            // Image picker
+            InkWell(
+              onTap: pickImage,
+              child: Container(
+                width: double.infinity,
+                height: 180,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey[200],
+                ),
+                child: pickedImage == null
+                    ? const Center(child: Text('Tap untuk pilih foto'))
+                    : Image.file(pickedImage!, fit: BoxFit.cover),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            isLoading
+                ? const CircularProgressIndicator()
+                : ElevatedButton(
+                    onPressed: submitDonation,
+                    child: const Text("Kirim Donasi"),
                   ),
-                  child: _imageFile == null
-                      ? const Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.camera_alt, size: 50),
-                      Text('Tap untuk upload foto'),
-                    ],
-                  )
-                      : Image.file(_imageFile!, fit: BoxFit.cover),
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              // Form Input
-              TextFormField(
-                controller: _foodNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nama Makanan',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => value!.isEmpty ? 'Harap isi nama makanan' : null,
-              ),
-              const SizedBox(height: 15),
-
-              TextFormField(
-                controller: _descController,
-                decoration: const InputDecoration(
-                  labelText: 'Deskripsi',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-                validator: (value) => value!.isEmpty ? 'Harap isi deskripsi' : null,
-              ),
-              const SizedBox(height: 15),
-
-              TextFormField(
-                controller: _quantityController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'Jumlah (porsi)',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => value!.isEmpty ? 'Harap isi jumlah' : null,
-              ),
-              const SizedBox(height: 20),
-
-              // Pilih Organisasi
-              DropdownButtonFormField(
-                value: _selectedOrg,
-                items: _organizations.map((org) {
-                  return DropdownMenuItem(
-                    value: org,
-                    child: Text(org),
-                  );
-                }).toList(),
-                onChanged: (value) => setState(() => _selectedOrg = value),
-                decoration: const InputDecoration(
-                  labelText: 'Pilih Organisasi',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => value == null ? 'Harap pilih organisasi' : null,
-              ),
-              const SizedBox(height: 30),
-
-              // Tombol Submit
-              ElevatedButton(
-                onPressed: _isSubmitting ? null : _submitDonation,
-                style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50),
-                ),
-                child: _isSubmitting
-                    ? const CircularProgressIndicator()
-                    : const Text('DONASIKAN', style: TextStyle(fontSize: 18)),
-              ),
-            ],
-          ),
+          ],
         ),
       ),
     );

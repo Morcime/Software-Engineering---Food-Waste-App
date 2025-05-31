@@ -1,60 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class AuthService{
-  //get instance of firebase auth
+class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  // get current user
-  User? getCurrentUser(){
+  Future<String?> getUserRole() async {
+    final user = _firebaseAuth.currentUser;
+    if(user==null) return null;
+
+    final doc = await _firestore.collection('users').doc(user.uid).get();
+    if(!doc.exists)return null;
+
+    return doc.data()?['role'] as String?;
+  }
+
+  User? getCurrentUser() {
     return _firebaseAuth.currentUser;
   }
 
-  // sign in
-  Future<UserCredential> signInWithEmailandPassword(String email, password) async {
-    try{
-      // sign user in
-      UserCredential userCredential = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-
-
-      return userCredential;
-    }
-
-    // catch error
-    on FirebaseAuthException catch (e){
-      throw Exception(e.code);
+  Future<UserCredential> signInWithEmailandPassword(String email, String password) async {
+    try {
+      return await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e.message ?? 'Login failed.');
     }
   }
 
-  // sign up
   Future<UserCredential> signUpWithEmailPassword(String email, String password) async {
     try {
-      UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      // Berhasil, return UserCredential
-      return userCredential;
+      return await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
     } on FirebaseAuthException catch (e) {
-      // Map error code ke pesan
-      String message;
       if (e.code == 'email-already-in-use') {
-        message = 'This email is already registered. Please log in instead.';
+        throw Exception('This email is already registered. Please log in instead.');
       } else if (e.code == 'weak-password') {
-        message = 'The password is too weak.';
+        throw Exception('The password is too weak.');
       } else {
-        message = 'Registration failed: ${e.message}';
+        throw Exception('Registration failed: ${e.message}');
       }
-      throw Exception(message); // throw dengan pesan error custom
     } catch (e) {
       throw Exception('An unexpected error occurred.');
     }
   }
 
-  //sign out
-  Future<void> signOut() async{
-    return await _firebaseAuth.signOut();
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
   }
 }

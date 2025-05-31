@@ -4,6 +4,7 @@ import 'package:foode_waste_app_1/pages/payment_page.dart';
 import 'package:provider/provider.dart';
 
 import '../components/my_button.dart';
+
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
@@ -12,20 +13,35 @@ class CartPage extends StatelessWidget {
     return Consumer<Restaurant>(
       builder: (context, restaurant, child) {
         if (restaurant.cart.isEmpty) {
-          return Center(
-            child: Text("Your cart is empty"),
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text("Cart"),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+            body: const Center(
+              child: Text(
+                "Your cart is empty",
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
           );
         }
 
         return Scaffold(
           appBar: AppBar(
-            title: Text("Cart"),
+            title: const Text("Cart"),
             actions: [
               IconButton(
-                icon: Icon(Icons.delete),
+                icon: const Icon(Icons.delete),
                 onPressed: () {
                   restaurant.clearCart();
                 },
+                tooltip: "Clear Cart",
               ),
             ],
           ),
@@ -42,7 +58,7 @@ class CartPage extends StatelessWidget {
                         '${item.quantity}x \$${item.food.price.toStringAsFixed(2)}',
                       ),
                       trailing: Text(
-                        '\$${(item.totalPrice).toStringAsFixed(2)}',
+                        '\$${item.totalPrice.toStringAsFixed(2)}',
                       ),
                     );
                   },
@@ -52,27 +68,27 @@ class CartPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    Divider(),
+                    const Divider(),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Total:'),
+                        const Text('Total:'),
                         Text(
                           '\$${restaurant.getTotalPrice().toStringAsFixed(2)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     MyButton(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => PaymentPage(),
+                            builder: (context) => const PaymentPage(),
                           ),
                         );
                       },
@@ -88,42 +104,3 @@ class CartPage extends StatelessWidget {
     );
   }
 }
-
-// class CartPage extends StatelessWidget {
-//   const CartPage({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Consumer<Restaurant>(
-//       builder: (context, restaurant, child) {
-//         // cart
-//         final userCart = restaurant.cart;
-//
-//         // scaffold UI
-//         return Scaffold(
-//           appBar: AppBar(
-//             title: Text("Cart"),
-//             backgroundColor: Colors.transparent,
-//             foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-//           ),
-//           body: Column(
-//             children: [
-//               Expanded(
-//                 child: ListView.builder(
-//                   itemCount: userCart.length,
-//                   itemBuilder: (context, index) {
-//                     // get individual cart
-//                     final cartItem = userCart[index];
-//
-//                     //return cart tile UI
-//                     return ListTile(title: Text(cartItem.food.name));
-//                   },
-//                 ),
-//               ),
-//             ],
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
