@@ -21,7 +21,7 @@ class FireStoreService {
       'receivedAt': FieldValue.serverTimestamp(),
     });
   }
-  
+
   Future<void> uploadFood({
     required String name,
     required String description,
@@ -68,14 +68,14 @@ class FireStoreService {
     });
   }
 
-  // menyimpan riwayat transaksi
+  // Menyimpan riwayat transaksi
   Future<void> checkoutOrder({
     required String userId,
     required int totalPrice,
     required String receipt,
   }) async {
     await _db.collection('transaction_history').add({
-      'userId': userId, // konsisten lowercase
+      'userId': userId,
       'totalPrice': totalPrice,
       'receipt': receipt,
       'status': 'processing',
@@ -84,17 +84,25 @@ class FireStoreService {
   }
 
   Future<void> clearCart(String userId) async {
-  final userDoc = FirebaseFirestore.instance.collection('users').doc(userId);
+    final userDoc = _db.collection('users').doc(userId);
+    await userDoc.update({
+      'restaurantCart': [],
+    });
+  }
 
-  // Jika restaurantCart adalah list, set ke []
-  await userDoc.update({
-    'restaurantCart': [],
-  });
+  // --- Fungsi khusus untuk donations collectionGroup ---
 
-  // Jika restaurantCart adalah map, set ke {}
-  // await userDoc.update({
-  //   'restaurantCart': {},
-  // });
-}
+  // Stream collectionGroup 'donations' milik user, order by createdAt desc
+  Stream<QuerySnapshot> getUserDonationsStream(String userId) {
+    return _db
+        .collectionGroup('donations')
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .snapshots();
+  }
 
+  // Update field 'pickedUp' pada dokumen donation tertentu
+  Future<void> markDonationAsPickedUp(DocumentReference docRef) async {
+    await docRef.update({'pickedUp': true});
+  }
 }

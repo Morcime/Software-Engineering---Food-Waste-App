@@ -14,8 +14,15 @@ class _DonationPageState extends State<DonationPage> {
   final TextEditingController productNameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
-  DateTime? selectedDate;
 
+  final List<String> shelterOptions = [
+    'Panti Asuhan Harapan',
+    'Panti Jompo Bahagia',
+    'Panti Tuna Netra Cemerlang'
+  ];
+
+  String? selectedShelter;
+  DateTime? selectedDate;
   bool isLoading = false;
 
   Future<void> submitDonation() async {
@@ -24,12 +31,17 @@ class _DonationPageState extends State<DonationPage> {
     final quantityText = quantityController.text.trim();
     final quantity = int.tryParse(quantityText);
 
-    if (name.isEmpty || description.isEmpty || quantity == null || quantity <= 0 || selectedDate == null) {
+    if (name.isEmpty ||
+        description.isEmpty ||
+        quantity == null ||
+        quantity <= 0 ||
+        selectedDate == null ||
+        selectedShelter == null) {
       showDialog(
         context: context,
         builder: (context) => const AlertDialog(
           title: Text('Error'),
-          content: Text('Semua field harus diisi dan jumlah harus angka positif!'),
+          content: Text('Semua field harus diisi dengan benar!'),
         ),
       );
       return;
@@ -44,6 +56,14 @@ class _DonationPageState extends State<DonationPage> {
       setState(() {
         isLoading = false;
       });
+      // Bisa kasih alert user harus login
+      showDialog(
+        context: context,
+        builder: (context) => const AlertDialog(
+          title: Text('Error'),
+          content: Text('Anda harus login terlebih dahulu.'),
+        ),
+      );
       return;
     }
 
@@ -53,8 +73,9 @@ class _DonationPageState extends State<DonationPage> {
       'description': description,
       'quantity': quantity,
       'expiryDate': selectedDate,
+      'shelterName': selectedShelter,
       'createdAt': FieldValue.serverTimestamp(),
-      'pickedUp' : false,
+      'pickedUp': false,
     });
 
     setState(() {
@@ -63,6 +84,7 @@ class _DonationPageState extends State<DonationPage> {
       descriptionController.clear();
       quantityController.clear();
       selectedDate = null;
+      selectedShelter = null;
     });
 
     showDialog(
@@ -79,9 +101,7 @@ class _DonationPageState extends State<DonationPage> {
     if (!widget.isSeller) {
       return Scaffold(
         appBar: AppBar(title: const Text("Donasi")),
-        body: const Center(
-          child: Text("Halaman ini hanya untuk Penjual."),
-        ),
+        body: const Center(child: Text("Halaman ini hanya untuk Penjual.")),
       );
     }
 
@@ -91,7 +111,7 @@ class _DonationPageState extends State<DonationPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.of(context).pushReplacementNamed('/home'); // atau ganti sesuai navigasi kamu
+            Navigator.of(context).pushReplacementNamed('/home');
           },
         ),
       ),
@@ -112,8 +132,25 @@ class _DonationPageState extends State<DonationPage> {
             const SizedBox(height: 10),
             TextField(
               controller: quantityController,
-              decoration: const InputDecoration(labelText: "Jumlah (porsi/unit)"),
+              decoration:
+                  const InputDecoration(labelText: "Jumlah (porsi/unit)"),
               keyboardType: TextInputType.number,
+            ),
+            const SizedBox(height: 10),
+            DropdownButtonFormField<String>(
+              value: selectedShelter,
+              decoration: const InputDecoration(labelText: 'Pilih Panti Tujuan'),
+              items: shelterOptions.map((shelter) {
+                return DropdownMenuItem<String>(
+                  value: shelter,
+                  child: Text(shelter),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  selectedShelter = value;
+                });
+              },
             ),
             const SizedBox(height: 10),
             ListTile(
