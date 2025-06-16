@@ -17,7 +17,7 @@ class Food {
 }
 
 //food categories
-enum FoodCategory { burgers, chips, desserts, pastas, pastries }
+enum FoodCategory { BurgerQueen, ChippyChups, JACO, Emiliano, MIKO }
 
 // food addons
 class Addon {

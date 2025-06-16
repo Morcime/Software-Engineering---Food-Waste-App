@@ -15,7 +15,7 @@ class Restaurant extends ChangeNotifier {
       "Delicious Burger with cheese, lettuce, and juicy beef patty.",
       imagePath: "lib/images/burgers/burger.jpg",
       price: 4.50,
-      category: FoodCategory.burgers,
+      category: FoodCategory.BurgerQueen,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -28,7 +28,7 @@ class Restaurant extends ChangeNotifier {
       "Delicious Burger with cheese, lettuce, and juicy beef patty.",
       imagePath: "lib/images/burgers/burger1.jpeg",
       price: 4.50,
-      category: FoodCategory.burgers,
+      category: FoodCategory.BurgerQueen,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -41,7 +41,7 @@ class Restaurant extends ChangeNotifier {
       "Delicious Burger with cheese, lettuce, and juicy beef patty.",
       imagePath: "lib/images/burgers/burger2.jpeg",
       price: 4.50,
-      category: FoodCategory.burgers,
+      category: FoodCategory.BurgerQueen,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -54,7 +54,7 @@ class Restaurant extends ChangeNotifier {
       "Delicious Burger with cheese, lettuce, and juicy beef patty.",
       imagePath: "lib/images/burgers/burger3.jpeg",
       price: 4.50,
-      category: FoodCategory.burgers,
+      category: FoodCategory.BurgerQueen,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -67,7 +67,7 @@ class Restaurant extends ChangeNotifier {
       "Delicious Burger with cheese, lettuce, and juicy beef patty.",
       imagePath: "lib/images/burgers/burger4.jpeg",
       price: 4.50,
-      category: FoodCategory.burgers,
+      category: FoodCategory.BurgerQueen,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -82,7 +82,7 @@ class Restaurant extends ChangeNotifier {
       "Crispy and crunchy chips that serve as a delicious side dish.",
       imagePath: "lib/images/chips/chips.jpg",
       price: 4.50,
-      category: FoodCategory.chips,
+      category: FoodCategory.ChippyChups,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -95,7 +95,7 @@ class Restaurant extends ChangeNotifier {
       "Crispy and crunchy chips that serve as a delicious side dish.",
       imagePath: "lib/images/chips/chips1.jpeg",
       price: 4.50,
-      category: FoodCategory.chips,
+      category: FoodCategory.ChippyChups,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -108,7 +108,7 @@ class Restaurant extends ChangeNotifier {
       "Crispy and crunchy chips that serve as a delicious side dish.",
       imagePath: "lib/images/chips/chips2.jpeg",
       price: 4.50,
-      category: FoodCategory.chips,
+      category: FoodCategory.ChippyChups,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -121,7 +121,7 @@ class Restaurant extends ChangeNotifier {
       "Crispy and crunchy chips that serve as a delicious side dish.",
       imagePath: "lib/images/chips/chips3.jpeg",
       price: 4.50,
-      category: FoodCategory.chips,
+      category: FoodCategory.ChippyChups,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -134,7 +134,7 @@ class Restaurant extends ChangeNotifier {
       "Crispy and crunchy chips that serve as a delicious side dish.",
       imagePath: "lib/images/chips/chips4.jpeg",
       price: 4.50,
-      category: FoodCategory.chips,
+      category: FoodCategory.ChippyChups,
       availableAddons: [
         Addon(name: "Extra Cheese", price: 0.99),
         Addon(name: "Extra Pickles", price: 0.99),
@@ -148,7 +148,7 @@ class Restaurant extends ChangeNotifier {
       description: "Sweet and delicious dessert.",
       imagePath: "lib/images/desserts/dessert.jpg",
       price: 4.50,
-      category: FoodCategory.desserts,
+      category: FoodCategory.JACO,
       availableAddons: [
         Addon(name: "Extra Frosting", price: 0.99),
         Addon(name: "Extra Sugar", price: 0.99),
@@ -159,7 +159,7 @@ class Restaurant extends ChangeNotifier {
       description: "Sweet and delicious dessert.",
       imagePath: "lib/images/desserts/dessert1.jpeg",
       price: 4.50,
-      category: FoodCategory.desserts,
+      category: FoodCategory.JACO,
       availableAddons: [
         Addon(name: "Extra Frosting", price: 0.99),
         Addon(name: "Extra Sugar", price: 0.99),
@@ -170,7 +170,7 @@ class Restaurant extends ChangeNotifier {
       description: "Sweet and delicious dessert.",
       imagePath: "lib/images/desserts/dessert2.jpeg",
       price: 4.50,
-      category: FoodCategory.desserts,
+      category: FoodCategory.JACO,
       availableAddons: [
         Addon(name: "Extra Frosting", price: 0.99),
         Addon(name: "Extra Sugar", price: 0.99),
@@ -181,7 +181,7 @@ class Restaurant extends ChangeNotifier {
       description: "Sweet and delicious dessert.",
       imagePath: "lib/images/desserts/dessert3.jpeg",
       price: 4.50,
-      category: FoodCategory.desserts,
+      category: FoodCategory.JACO,
       availableAddons: [
         Addon(name: "Extra Frosting", price: 0.99),
         Addon(name: "Extra Sugar", price: 0.99),
@@ -192,7 +192,7 @@ class Restaurant extends ChangeNotifier {
       description: "Sweet and delicious dessert.",
       imagePath: "lib/images/desserts/dessert4.jpeg",
       price: 4.50,
-      category: FoodCategory.desserts,
+      category: FoodCategory.JACO,
       availableAddons: [
         Addon(name: "Extra Frosting", price: 0.99),
         Addon(name: "Extra Sugar", price: 0.99),
@@ -206,7 +206,7 @@ class Restaurant extends ChangeNotifier {
       "A staple carbohydrate-rich food made from wheat, often served cooked with sauces, vegetables, or proteins.",
       imagePath: "lib/images/pastas/pasta.jpeg",
       price: 4.50,
-      category: FoodCategory.pastas,
+      category: FoodCategory.Emiliano,
       availableAddons: [
         Addon(name: "Extra Sauce", price: 0.99),
         Addon(name: "Extra Cheese", price: 0.99),
@@ -218,7 +218,7 @@ class Restaurant extends ChangeNotifier {
       "A staple carbohydrate-rich food made from wheat, often served cooked with sauces, vegetables, or proteins.",
       imagePath: "lib/images/pastas/pasta1.jpeg",
       price: 4.50,
-      category: FoodCategory.pastas,
+      category: FoodCategory.Emiliano,
       availableAddons: [
         Addon(name: "Extra Sauce", price: 0.99),
         Addon(name: "Extra Cheese", price: 0.99),
@@ -230,7 +230,7 @@ class Restaurant extends ChangeNotifier {
       "A staple carbohydrate-rich food made from wheat, often served cooked with sauces, vegetables, or proteins.",
       imagePath: "lib/images/pastas/pasta2.jpeg",
       price: 4.50,
-      category: FoodCategory.pastas,
+      category: FoodCategory.Emiliano,
       availableAddons: [
         Addon(name: "Extra Sauce", price: 0.99),
         Addon(name: "Extra Cheese", price: 0.99),
@@ -242,7 +242,7 @@ class Restaurant extends ChangeNotifier {
       "A staple carbohydrate-rich food made from wheat, often served cooked with sauces, vegetables, or proteins.",
       imagePath: "lib/images/pastas/pasta3.jpeg",
       price: 4.50,
-      category: FoodCategory.pastas,
+      category: FoodCategory.Emiliano,
       availableAddons: [
         Addon(name: "Extra Sauce", price: 0.99),
         Addon(name: "Extra Cheese", price: 0.99),
@@ -254,7 +254,7 @@ class Restaurant extends ChangeNotifier {
       "A staple carbohydrate-rich food made from wheat, often served cooked with sauces, vegetables, or proteins.",
       imagePath: "lib/images/pastas/pasta4.jpeg",
       price: 4.50,
-      category: FoodCategory.pastas,
+      category: FoodCategory.Emiliano,
       availableAddons: [
         Addon(name: "Extra Sauce", price: 0.99),
         Addon(name: "Extra Cheese", price: 0.99),
@@ -267,7 +267,7 @@ class Restaurant extends ChangeNotifier {
       description: "Baked goods made with dough, often sweet or filled.",
       imagePath: "lib/images/pastries/pastry.jpg",
       price: 4.50,
-      category: FoodCategory.pastries,
+      category: FoodCategory.MIKO,
       availableAddons: [
         Addon(name: "Extra Sugar", price: 0.99),
         Addon(name: "Extra Frosting", price: 0.99),
@@ -278,7 +278,7 @@ class Restaurant extends ChangeNotifier {
       description: "Baked goods made with dough, often sweet or filled.",
       imagePath: "lib/images/pastries/pastry1.jpeg",
       price: 4.50,
-      category: FoodCategory.pastries,
+      category: FoodCategory.MIKO,
       availableAddons: [
         Addon(name: "Extra Sugar", price: 0.99),
         Addon(name: "Extra Frosting", price: 0.99),
@@ -289,7 +289,7 @@ class Restaurant extends ChangeNotifier {
       description: "Baked goods made with dough, often sweet or filled.",
       imagePath: "lib/images/pastries/pastry2.jpeg",
       price: 4.50,
-      category: FoodCategory.pastries,
+      category: FoodCategory.MIKO,
       availableAddons: [
         Addon(name: "Extra Sugar", price: 0.99),
         Addon(name: "Extra Frosting", price: 0.99),
@@ -300,7 +300,7 @@ class Restaurant extends ChangeNotifier {
       description: "Baked goods made with dough, often sweet or filled.",
       imagePath: "lib/images/pastries/pastry3.jpeg",
       price: 4.50,
-      category: FoodCategory.pastries,
+      category: FoodCategory.MIKO,
       availableAddons: [
         Addon(name: "Extra Sugar", price: 0.99),
         Addon(name: "Extra Frosting", price: 0.99),
@@ -311,7 +311,7 @@ class Restaurant extends ChangeNotifier {
       description: "Baked goods made with dough, often sweet or filled.",
       imagePath: "lib/images/pastries/pastry4.jpeg",
       price: 4.50,
-      category: FoodCategory.pastries,
+      category: FoodCategory.MIKO,
       availableAddons: [
         Addon(name: "Extra Sugar", price: 0.99),
         Addon(name: "Extra Frosting", price: 0.99),
